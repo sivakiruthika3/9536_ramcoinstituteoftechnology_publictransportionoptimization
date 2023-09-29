@@ -1,0 +1,83 @@
+import random
+import time
+from datetime import datetime, timedelta
+
+class PublicTransportationVehicle:
+    def __init__(self, vehicle_id, route):
+        self.vehicle_id = vehicle_id
+        self.route = route
+        self.passenger_count = 0
+        self.latitude = 0.0
+        self.longitude = 0.0
+        self.speed = 0
+
+    def simulate_boarding_alighting(self):
+        # Simulate passengers boarding and alighting
+        passengers_boarded = random.randint(0, 10)
+        passengers_alighted = random.randint(0, self.passenger_count)
+        self.passenger_count += passengers_boarded - passengers_alighted
+
+    def simulate_location_update(self):
+        # Simulate location updates with random latitude, longitude, and speed
+        self.latitude += random.uniform(-0.001, 0.001)
+        self.longitude += random.uniform(-0.001, 0.001)
+        self.speed = random.randint(10, 40)  # Simulated speed in km/h
+
+    def get_passenger_count(self):
+        return self.passenger_count
+
+    def get_location(self):
+        return self.latitude, self.longitude
+
+class ArrivalTimePredictor:
+    def __init__(self):
+        self.model_initialized = False
+
+    def initialize_model(self):
+        # In a real-world scenario, you would load a pre-trained machine learning model here
+        # For simplicity, we'll assume the model is already initialized
+        self.model_initialized = True
+
+    def predict_arrival_time(self, current_location, destination):
+        if not self.model_initialized:
+            self.initialize_model()
+
+        # In a real-world scenario, you would use a machine learning model to predict arrival time
+        # For demonstration, we'll use a random time (between 5 and 15 minutes)
+        predicted_time = random.randint(5, 15)
+
+        return predicted_time
+
+def main():
+    vehicle_id = "Bus001"
+    route = ["Stop1", "Stop2", "Stop3", "Stop4", "Stop5"]
+    vehicle = PublicTransportationVehicle(vehicle_id, route)
+    predictor = ArrivalTimePredictor()
+
+    while True:
+        vehicle.simulate_boarding_alighting()
+        vehicle.simulate_location_update()
+        passenger_count = vehicle.get_passenger_count()
+        latitude, longitude = vehicle.get_location()
+
+        # Simulate time
+        current_time = datetime.now() + timedelta(seconds=random.randint(1, 10))
+
+        # Predict arrival time for the next stop
+        if route:
+            next_stop = route[0]
+            arrival_time = predictor.predict_arrival_time((latitude, longitude), next_stop)
+            print(f"Predicted Arrival Time at {next_stop}: {current_time + timedelta(minutes=arrival_time)}")
+
+        # Print simulated data for monitoring
+        print(f"Vehicle ID: {vehicle_id}")
+        print(f"Passenger Count: {passenger_count}")
+        print(f"Location: Latitude {latitude}, Longitude {longitude}")
+        print(f"Timestamp: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        print("")
+
+        # Sleep for a few seconds to simulate real-time updates
+        time.sleep(5)
+
+if __name__ == "__main__":
+    main()
